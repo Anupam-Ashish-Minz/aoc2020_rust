@@ -9,9 +9,19 @@ pub fn run() {
     let input: ParsedInput = read_input_from_file();
     let premble = &input[..25];
     let input = &input[25..];
-    for i in input {
-        
-    }
+    let premble_size = 25;
+    let mut value: Option<usize> = None;
+    input.iter().enumerate().for_each(|(i, x)| {
+        if i < premble_size {return}
+        let premble: &[usize] = &input[i-premble_size..i];
+        let premble: ParsedInput = premble.iter().map(|x| *x).collect();
+        if !is_valid_num(&premble, *x) {
+            println!("{}", x);
+            value = Some(*x);
+            return
+        }
+    });
+    println!("part 1 {:?}", value);
 }
 
 fn is_valid_num(premble: &ParsedInput, num: usize) -> bool {
@@ -60,10 +70,16 @@ mod test {
         //for i in input {
         //    let premble = &input[..5];
         //}
+        let mut value: Option<usize> = None;
+        let premble_size = 5;
         input.iter().enumerate().for_each(|(i, x)| {
-            let premble: &[usize] = &input[i..i+5];
+            if i < premble_size {return}
+            let premble: &[usize] = &input[i-premble_size..i];
             let premble: ParsedInput = premble.iter().map(|x| *x).collect();
-            is_valid_num(&premble, *x);
-        })
+            if !is_valid_num(&premble, *x) {
+                value = Some(*x);
+            }
+        });
+        assert_eq!(Some(127), value);
     }
 }

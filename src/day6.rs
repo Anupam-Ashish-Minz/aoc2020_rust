@@ -91,7 +91,7 @@ b";
             .map(|x| x.to_string())
             .collect();
 
-        assert_eq!(11, calc_total_sum_part_1(input));
+        assert_eq!(11, calc_total_sum_part_1(&input));
     } 
 
     #[test]
@@ -116,7 +116,7 @@ b";
             .map(|x| x.to_string())
             .collect();
 
-        let output = calc_total_sum_part_2(input);
+        let output = calc_total_sum_part_2(&input);
         assert_eq!(6, output); 
     }
 }

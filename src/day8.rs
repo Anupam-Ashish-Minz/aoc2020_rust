@@ -215,5 +215,3 @@ acc +6";
         assert_eq!(ans, 8);
     }
 }
-
-
