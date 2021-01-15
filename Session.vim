@@ -8,10 +8,11 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 set shortmess=aoO
 badd +217 src/day8.rs
-badd +1 src/day9.rs
+badd +15 src/day9.rs
 badd +1 src/day7.rs
 badd +1 src/main.rs
-badd +0 .git/index
+badd +1 .git/index
+badd +0 .gitignore
 argglobal
 %argdel
 edit src/day9.rs
@@ -33,17 +34,26 @@ setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
 setlocal fdi=#
-setlocal fdl=9
+setlocal fdl=1
 setlocal fml=1
 setlocal fdn=5
 setlocal fen
 silent! normal! zE
-let s:l = 5 - ((2 * winheight(0) + 10) / 20)
+9,20fold
+21,34fold
+35,45fold
+46,67fold
+74,94fold
+72,94fold
+96,102fold
+104,111fold
+68,111fold
+let s:l = 15 - ((6 * winheight(0) + 10) / 20)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-5
-normal! 019|
+15
+normal! 048|
 lcd ~/work/codingChallenges/aoc/aoc2020_rust/src
 wincmd w
 argglobal
