@@ -7,21 +7,23 @@ use handle_input::parse_input;
 #[allow(dead_code)]
 pub fn run() {
     let input: ParsedInput = read_input_from_file();
-    let premble = &input[..25];
-    let input = &input[25..];
     let premble_size = 25;
+    let part1_value = get_invalid_num(input, premble_size);
+    println!("part 1 {:?}", part1_value);
+}
+
+pub fn get_invalid_num(input: ParsedInput, premble_size: usize) -> Option<usize> {
     let mut value: Option<usize> = None;
     input.iter().enumerate().for_each(|(i, x)| {
         if i < premble_size {return}
         let premble: &[usize] = &input[i-premble_size..i];
         let premble: ParsedInput = premble.iter().map(|x| *x).collect();
         if !is_valid_num(&premble, *x) {
-            println!("{}", x);
             value = Some(*x);
             return
         }
     });
-    println!("part 1 {:?}", value);
+    return value;
 }
 
 fn is_valid_num(premble: &ParsedInput, num: usize) -> bool {
@@ -65,21 +67,7 @@ mod test {
     fn test_is_valid_num() {
         let raw_input = RAWINPUT.to_string();
         let input = parse_input(raw_input);
-        //let premble = &input[..5];
-        //let input = &input[5..];
-        //for i in input {
-        //    let premble = &input[..5];
-        //}
-        let mut value: Option<usize> = None;
-        let premble_size = 5;
-        input.iter().enumerate().for_each(|(i, x)| {
-            if i < premble_size {return}
-            let premble: &[usize] = &input[i-premble_size..i];
-            let premble: ParsedInput = premble.iter().map(|x| *x).collect();
-            if !is_valid_num(&premble, *x) {
-                value = Some(*x);
-            }
-        });
+        let value = get_invalid_num(input, 5);
         assert_eq!(Some(127), value);
     }
 }

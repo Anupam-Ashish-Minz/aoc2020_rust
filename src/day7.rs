@@ -16,7 +16,6 @@ pub fn run() {
     println!("part 2 count = {}", count);
 }
 
-
 fn traverse_graph(graph: &GraphType<String>, visited_nodes: &mut Vec<String>, start_node: &str, goal: &str, depth: usize) -> Option<usize> {
     let has_node_been_visited: bool = match visited_nodes.iter().find(|node| node==&start_node) {
         Some(_) => true,
@@ -65,7 +64,6 @@ fn count_possible_container_bags(raw_input: String) -> usize {
     return count;
 }
 
-
 fn count_bags_inside_bags(graph: &GraphType<String>, start_node: &str, num_of_bags_parent: usize) -> Option<usize> {
     let child_nodes = graph.get(start_node);
     let mut total_child_bag_count: usize = 0;
@@ -87,17 +85,19 @@ fn count_bags_inside_bags(graph: &GraphType<String>, start_node: &str, num_of_ba
 mod tests {
     use super::*;
 
+    static RAWINPUT: &str = "light red bags contain 1 bright white bag, 2 muted yellow bags.
+dark orange bags contain 3 bright white bags, 4 muted yellow bags.
+bright white bags contain 1 shiny gold bag.
+muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
+shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
+dark olive bags contain 3 faded blue bags, 4 dotted black bags.
+vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
+faded blue bags contain no other bags.
+dotted black bags contain no other bags.";
+
     #[test]
     fn test_traverse_graph() {
-        let raw_input = "light red bags contain 1 bright white bag, 2 muted yellow bags.
-            dark orange bags contain 3 bright white bags, 4 muted yellow bags.
-            bright white bags contain 1 shiny gold bag.
-            muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
-            shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
-            dark olive bags contain 3 faded blue bags, 4 dotted black bags.
-            vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
-            faded blue bags contain no other bags.
-            dotted black bags contain no other bags.";
+        let raw_input = RAWINPUT.to_string();
         let graph = normalize_input(raw_input.to_string());
         let start_node = "light red";
         let goal = "shiny gold";
@@ -109,34 +109,19 @@ mod tests {
 
     #[test]
     fn test_count_possible_container_bags() {
-        let raw_input = "light red bags contain 1 bright white bag, 2 muted yellow bags.
-            dark orange bags contain 3 bright white bags, 4 muted yellow bags.
-            bright white bags contain 1 shiny gold bag.
-            muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
-            shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
-            dark olive bags contain 3 faded blue bags, 4 dotted black bags.
-            vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
-            faded blue bags contain no other bags.
-            dotted black bags contain no other bags.".to_string();
+        let raw_input = RAWINPUT.to_string();
         let count = count_possible_container_bags(raw_input);
         assert_eq!(4, count);
     }
 
     #[test]
     fn test_count_bags_inside_bags() {
-        let raw_input = "shiny gold bags contain 2 dark red bags.
-            dark red bags contain 2 dark orange bags.
-            dark orange bags contain 2 dark yellow bags.
-            dark yellow bags contain 2 dark green bags.
-            dark green bags contain 2 dark blue bags.
-            dark blue bags contain 2 dark violet bags.
-            dark violet bags contain no other bags.".to_string();
+        let raw_input = RAWINPUT.to_string();
         let graph = normalize_input(raw_input);
         let start_node = "shiny gold";
         let count = count_bags_inside_bags(&graph, start_node, 1).unwrap();
-        // substract one to remove the shiny gold bag
         let count = count - 1;
-        assert_eq!(126, count);
+        assert_eq!(32, count);
 
         let raw_input2 = "shiny gold bags contain 2 dark red bags.
             dark red bags contain 2 dark orange bags, 2 dark green bags.

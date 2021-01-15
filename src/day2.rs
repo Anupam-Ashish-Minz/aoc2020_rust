@@ -6,7 +6,6 @@ pub fn run() {
     let input: Vec<String> = read_input_from_file(filepath);
     read_input_from_file(filepath);
     let output: Vec<_> = input.iter().map(|x| parse_input_string_to_tuples(x)).collect();
-    //println!("{:?}", output[0]);
 
     // testing is_valid_password
     assert_eq!(true, is_valid_password_part1(1, 3, "a", "abcde"));
