@@ -13,7 +13,7 @@ pub fn run() {
 fn compute_diff(input: Input) -> Vec<usize> {
     let mut input = input;
     input.sort();
-    let mut values: VecDeque<usize> = input.get_clone();
+    let mut values: VecDeque<usize> = input.clone();
     let mut diff_result: Vec<usize> = vec!();
     let mut prev = 0;
     while values!=[] {
