@@ -1,5 +1,7 @@
 use handle_input::Input;
 use std::collections::VecDeque;
+use handle_input::Graph;
+use std::collections::HashMap;
 
 mod handle_input;
 
@@ -8,6 +10,8 @@ pub fn run() {
     let diff_vec = compute_diff(input);
     let (count1, _count2, count3) = count_diffs(diff_vec);
     println!("day10 part1 {}", count1*count3);
+    let count = part2();
+    println!("day10 part2 {}", count);
 }
 
 fn compute_diff(input: Input) -> Vec<usize> {
@@ -42,6 +46,14 @@ fn count_diffs(diff_vec: Vec<usize>) -> (usize, usize, usize) {
         }
     }
     return (count1, count2, count3);
+}
+
+fn part2() -> usize {
+    let input = Input::read_input_from_file();
+    let max: usize = input.clone().into_iter().max().unwrap();
+    let graph: Graph = input.into_graph();
+    let count = graph.total_number_of_paths(0,max,0, &mut HashMap::new());
+    return count;
 }
 
 #[cfg(test)]

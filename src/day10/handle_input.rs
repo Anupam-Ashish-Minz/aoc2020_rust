@@ -1,6 +1,7 @@
 use std::fs;
 use std::collections::VecDeque;
 use std::collections::HashMap;
+use std::iter::IntoIterator;
 
 // Input 
 #[derive(Debug)]
@@ -65,6 +66,12 @@ impl Input {
     pub fn into_graph(self) -> Graph {
         let mut val: Vec<usize> = self.0.into();
         let mut g = Graph::new();
+        g.insert_key(0);
+        for j in &val {
+            if j>&0 && j<=&3 {
+                g.insert_value(0, *j);
+            }
+        }
         val.sort();
         for i in &val {
             g.insert_key(*i);
@@ -78,6 +85,19 @@ impl Input {
         return g;
     }
 }
+
+impl IntoIterator for Input {
+    type Item = usize;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        let v: Vec<usize> = self.0.into();
+        v.into_iter()
+    }
+}
+
+
+
 
 // Graph
 #[derive(Debug, PartialEq)]
@@ -143,8 +163,7 @@ impl Graph {
 
 #[allow(dead_code)]
 impl Graph {
-    pub fn total_number_of_paths(&self, start: usize, end: usize, total: usize) -> usize {
-        println!("start: {}", start);
+    pub fn total_number_of_paths(&self, start: usize, end: usize, total: usize, memo: &mut HashMap<usize, usize>) -> usize {
         let mut total = total;
         if start == end {
             total+=1;
@@ -153,7 +172,12 @@ impl Graph {
         if let Some(children) = children {
             let children = children;
             for next in children {
-                total = self.total_number_of_paths(next, end, total);
+                if memo.contains_key(&next) {
+                    total += *memo.get(&&next).unwrap();
+                } else {
+                    total = self.total_number_of_paths(next, end, total, memo);
+                    memo.insert(next, total);
+                }
             }
         }
         return total;
@@ -175,6 +199,38 @@ mod test {
         6
         12
         4";
+
+    const RAWINPUT2: &str = "28
+33
+18
+42
+31
+14
+46
+20
+48
+47
+24
+23
+49
+45
+19
+38
+39
+11
+1
+32
+25
+35
+8
+17
+7
+9
+4
+2
+34
+10
+3";
 
     // test Input
     #[test]
@@ -213,6 +269,7 @@ mod test {
     fn test_graph_conversion() {
         let input = Input::from(RAWINPUT);
         let mut test_graph = Graph::new();
+        test_graph.insert_key(0);
         test_graph.insert_key(1);
         test_graph.insert_key(4);
         test_graph.insert_key(5);
@@ -225,6 +282,7 @@ mod test {
         test_graph.insert_key(16);
         test_graph.insert_key(19);
 
+        test_graph.insert_value(0, 1);
         test_graph.insert_value(1, 4);
         test_graph.insert_value_vec(4, vec!(5,6,7));
         test_graph.insert_value_vec(5, vec!(6,7));
@@ -240,7 +298,7 @@ mod test {
     }
 
     #[test]
-    fn test_bfs() {
+    fn test_total_number_of_paths() {
         let mut test_graph = Graph::new();
         test_graph.insert_key(1);
         test_graph.insert_key(4);
@@ -264,7 +322,16 @@ mod test {
         test_graph.insert_value(12, 15);
         test_graph.insert_value(15, 16);
         test_graph.insert_value(16, 19);
-        let output_count = test_graph.total_number_of_paths(1, 19, 0);
+        let output_count = test_graph.total_number_of_paths(1, 19, 0, &mut HashMap::new());
         assert_eq!(8, output_count);
+    }
+
+
+    #[test]
+    fn test_total_numbers_of_paths2() {
+        let input = Input::from(RAWINPUT2);
+        let graph: Graph = input.into_graph();
+        let output_count = graph.total_number_of_paths(0, 49, 0, &mut HashMap::new());
+        assert_eq!(19208, output_count);
     }
 }
