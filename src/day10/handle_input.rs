@@ -92,6 +92,10 @@ impl Graph {
             HashMap::new()
         )
     }
+}
+
+// key values
+impl Graph {
     pub fn insert_key(&mut self, key: usize) {
         self.0.insert(key, vec!());
     }
@@ -113,24 +117,46 @@ impl Graph {
         let val = self.0.get(&key)?;
         return Some(val.clone());
     }
+}
+
+// some other methods
+#[allow(dead_code)]
+impl Graph {
     pub fn clone(self) -> HashMap<usize, Vec<usize>> {
         return self.0.clone();
     }
-    pub fn get_children(self, node: usize) -> Option<Vec<usize>> {
+    pub fn get_children(&self, node: usize) -> Option<Vec<usize>> {
         let children: Vec<usize> = self.0.get(&node)?.iter().map(|x| *x).collect();
         return Some(children);
     }
-    // has to be fixed
-    pub fn count_possible_orentations<'a>(&self, start: &usize, end: &'a usize, count: usize) -> usize {
-        let mut count: usize = count;
-        let children = self.0.get(start).unwrap();
+    pub fn bfs(&self, start: usize, end: usize) -> Option<usize> {
+        if start == end {
+            return Some(end);
+        }
+        let children = self.get_children(start).unwrap();
         for next in children {
-            return self.count_possible_orentations(next, end, count);
+            return self.bfs(next, end);
         }
-        if start==end {
-            count += 1;
+        return None;
+    }
+}
+
+#[allow(dead_code)]
+impl Graph {
+    pub fn total_number_of_paths(&self, start: usize, end: usize, total: usize) -> usize {
+        println!("start: {}", start);
+        let mut total = total;
+        if start == end {
+            total+=1;
         }
-        return count;
+        let children = self.get_children(start);
+        if let Some(children) = children {
+            let children = children;
+            for next in children {
+                total = self.total_number_of_paths(next, end, total);
+            }
+        }
+        return total;
     }
 }
 
@@ -139,16 +165,16 @@ mod test {
     use super::*;
 
     const RAWINPUT: &str = "16
-10
-15
-5
-1
-11
-7
-19
-6
-12
-4";
+        10
+        15
+        5
+        1
+        11
+        7
+        19
+        6
+        12
+        4";
 
     // test Input
     #[test]
@@ -238,7 +264,7 @@ mod test {
         test_graph.insert_value(12, 15);
         test_graph.insert_value(15, 16);
         test_graph.insert_value(16, 19);
-        let output_count = test_graph.count_possible_orentations(&1, &7, 0);
-        assert_eq!(19208, output_count);
+        let output_count = test_graph.total_number_of_paths(1, 19, 0);
+        assert_eq!(8, output_count);
     }
 }
