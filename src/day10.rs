@@ -48,7 +48,7 @@ fn count_diffs(diff_vec: Vec<usize>) -> (usize, usize, usize) {
 mod test {
     use super::*;
 
-    const RAWINPUT1: &str = "16
+   const RAWINPUT1: &str = "16
 10
 15
 5
@@ -91,6 +91,7 @@ mod test {
 34
 10
 3";
+
     #[test]
     fn test_count_diffs() {
         let input1 = Input::from(RAWINPUT1);

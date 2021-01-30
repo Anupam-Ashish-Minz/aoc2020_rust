@@ -4,9 +4,9 @@ use std::collections::HashMap;
 
 // Input 
 #[derive(Debug)]
-pub struct Input {
-    value: VecDeque<usize>
-}
+pub struct Input (
+    VecDeque<usize>
+);
 
 // private functions
 impl Input {
@@ -23,21 +23,21 @@ impl Input {
 #[allow(dead_code)]
 impl Input {
     pub fn new() -> Self {
-        Input {
-            value: VecDeque::new()
-        }
+        Input (
+            VecDeque::new()
+        )
     }
     pub fn from(input: &str) -> Self {
-        Input {
-            value: Input::parse_input(input.to_string())
-        }
+        Input (
+            Input::parse_input(input.to_string())
+        )
     }
     pub fn read_input_from_file() -> Self {
         const FILEPATH: &str = "input/day10.input";
         let input = fs::read_to_string(FILEPATH).unwrap();
-        Input {
-            value: Input::parse_input(input)
-        }
+        Input (
+            Input::parse_input(input)
+        )
     }
 }
 
@@ -45,16 +45,16 @@ impl Input {
 #[allow(dead_code)]
 impl Input {
     pub fn clone(&self) -> VecDeque<usize> {
-        return self.value.clone();
+        return self.0.clone();
     }
 }
 
 // mutable functions
 impl Input {
     pub fn sort(&mut self) {
-        let mut value: Vec<usize> = self.value.iter().map(|x| *x).collect();
+        let mut value: Vec<usize> = self.0.iter().map(|x| *x).collect();
         value.sort();
-        self.value = VecDeque::from(value);
+        self.0 = VecDeque::from(value);
     }
 }
 
@@ -63,7 +63,7 @@ impl Input {
 #[allow(dead_code)]
 impl Input {
     pub fn into_graph(self) -> Graph {
-        let mut val: Vec<usize> = self.value.into();
+        let mut val: Vec<usize> = self.0.into();
         let mut g = Graph::new();
         val.sort();
         for i in &val {
@@ -81,49 +81,58 @@ impl Input {
 
 // Graph
 #[derive(Debug, PartialEq)]
-pub struct Graph {
-    value: HashMap<usize, Vec<usize>>
-}
+pub struct Graph (
+    HashMap<usize, Vec<usize>>
+);
 
 #[allow(dead_code)]
 impl Graph {
     pub fn new() -> Self {
-        Graph {
-            value: HashMap::new()
-        }
+        Graph (
+            HashMap::new()
+        )
     }
     pub fn insert_key(&mut self, key: usize) {
-        self.value.insert(key, vec!());
+        self.0.insert(key, vec!());
     }
     pub fn insert_value(&mut self, key: usize, value: usize) {
-        let mut val: Vec<usize> = self.value
+        let mut val: Vec<usize> = self.0
             .get(&key)
             .expect("Key not found")
             .clone();
         val.push(value);
-        self.value.insert(key, val);
+        self.0.insert(key, val);
     }
     pub fn insert_value_vec(&mut self, key: usize, values: Vec<usize>) {
-        //let mut values = values;
-        //let mut val: Vec<usize> = self.value
-        //    .get(&key)
-        //    .expect("Key not found")
-        //    .clone();
-        //val.append(&mut values);
-        self.value.insert(key, values);
+        self.0.insert(key, values);
     }
     pub fn get_list_of_keys(self) -> Vec<usize> {
-        return self.value.keys().map(|x| *x).collect();
+        return self.0.keys().map(|x| *x).collect();
     }
     pub fn get_value(self, key: usize) -> Option<Vec<usize>> {
-        let val = self.value.get(&key)?;
+        let val = self.0.get(&key)?;
         return Some(val.clone());
     }
     pub fn clone(self) -> HashMap<usize, Vec<usize>> {
-        return self.value.clone();
+        return self.0.clone();
+    }
+    pub fn get_children(self, node: usize) -> Option<Vec<usize>> {
+        let children: Vec<usize> = self.0.get(&node)?.iter().map(|x| *x).collect();
+        return Some(children);
+    }
+    // has to be fixed
+    pub fn count_possible_orentations<'a>(&self, start: &usize, end: &'a usize, count: usize) -> usize {
+        let mut count: usize = count;
+        let children = self.0.get(start).unwrap();
+        for next in children {
+            return self.count_possible_orentations(next, end, count);
+        }
+        if start==end {
+            count += 1;
+        }
+        return count;
     }
 }
-
 
 #[cfg(test)]
 mod test {
@@ -147,7 +156,7 @@ mod test {
         let input = Input::from(RAWINPUT);
         let expected_output = vec!(16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4);
         let expected_output: VecDeque<usize> = VecDeque::from(expected_output);
-        assert_eq!(expected_output, input.value);
+        assert_eq!(expected_output, input.0);
     }
 
     // test sort in Input
@@ -157,7 +166,7 @@ mod test {
         input.sort();
         let expcted_output = vec!(1,4,5,6,7,10,11,12,15,16,19);
         let expcted_output: VecDeque<usize> = VecDeque::from(expcted_output);
-        assert_eq!(expcted_output, input.value);
+        assert_eq!(expcted_output, input.0);
     }
 
     //test graph
@@ -203,5 +212,33 @@ mod test {
         let input: Graph = input.into_graph();
         assert_eq!(input, test_graph);
     }
-}
 
+    #[test]
+    fn test_bfs() {
+        let mut test_graph = Graph::new();
+        test_graph.insert_key(1);
+        test_graph.insert_key(4);
+        test_graph.insert_key(5);
+        test_graph.insert_key(6);
+        test_graph.insert_key(7);
+        test_graph.insert_key(10);
+        test_graph.insert_key(11);
+        test_graph.insert_key(12);
+        test_graph.insert_key(15);
+        test_graph.insert_key(16);
+        test_graph.insert_key(19);
+
+        test_graph.insert_value(1, 4);
+        test_graph.insert_value_vec(4, vec!(5,6,7));
+        test_graph.insert_value_vec(5, vec!(6,7));
+        test_graph.insert_value(6, 7);
+        test_graph.insert_value(7, 10);
+        test_graph.insert_value_vec(10, vec!(11, 12));
+        test_graph.insert_value(11, 12);
+        test_graph.insert_value(12, 15);
+        test_graph.insert_value(15, 16);
+        test_graph.insert_value(16, 19);
+        let output_count = test_graph.count_possible_orentations(&1, &7, 0);
+        assert_eq!(19208, output_count);
+    }
+}
