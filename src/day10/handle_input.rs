@@ -96,9 +96,6 @@ impl IntoIterator for Input {
     }
 }
 
-
-
-
 // Graph
 #[derive(Debug, PartialEq)]
 pub struct Graph (
@@ -115,6 +112,7 @@ impl Graph {
 }
 
 // key values
+#[allow(dead_code)]
 impl Graph {
     pub fn insert_key(&mut self, key: usize) {
         self.0.insert(key, vec!());
@@ -189,16 +187,16 @@ mod test {
     use super::*;
 
     const RAWINPUT: &str = "16
-        10
-        15
-        5
-        1
-        11
-        7
-        19
-        6
-        12
-        4";
+10
+15
+5
+1
+11
+7
+19
+6
+12
+4";
 
     const RAWINPUT2: &str = "28
 33
