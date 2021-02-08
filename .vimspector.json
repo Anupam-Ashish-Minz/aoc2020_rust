@@ -1,0 +1,12 @@
+{
+  "configurations": {
+    "launch": {
+      "adapter": "CodeLLDB",
+      "configuration": {
+        "request": "launch",
+        "program": "${workspaceRoot}/target/debug/deps/aoc2020_rust-442876182d21a663",
+        "stopOnEntry": true
+      }
+    }
+  }
+}
